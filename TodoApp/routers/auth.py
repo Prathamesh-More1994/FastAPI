@@ -1,7 +1,5 @@
-import os
 from datetime import timedelta, datetime, timezone
 from typing import Annotated
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -12,19 +10,12 @@ from starlette import status
 from fastapi.templating import Jinja2Templates
 from ..database import SessionLocal
 from ..models import Users
-
-load_dotenv()
+from ..core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter(
     prefix='/auth',
     tags=['auth']
 )
-
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
-
-if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY environment variable is not set")
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
