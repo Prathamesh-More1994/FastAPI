@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
-from ..database import Base
+from ..database.database import Base
 from ..main import app
 from ..models import Todos,Users
 from ..routers.auth import bcrypt_context

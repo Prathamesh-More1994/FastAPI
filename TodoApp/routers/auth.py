@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
 from fastapi.templating import Jinja2Templates
-from ..database import SessionLocal
+from ..database.dependencies import get_db
 from ..models import Users
 from ..core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
@@ -33,14 +33,6 @@ class CreateUserRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 db_dependencies = Annotated[Session, Depends(get_db)]

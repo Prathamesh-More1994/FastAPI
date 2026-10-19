@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, Path, APIRouter
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 from starlette import status
-from ..database import SessionLocal
+from ..database.dependencies import get_db
 from ..models import Todos,Users
 from .auth import get_current_user
 from passlib.context import CryptContext
@@ -12,13 +12,6 @@ router = APIRouter(
     prefix='/user',
     tags=['user']
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 db_dependencies = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from starlette import status
 from ..models import Todos
-from ..database import SessionLocal
+from ..database.dependencies import get_db
 from .auth import get_current_user
 from starlette.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -15,15 +15,6 @@ router = APIRouter(
     prefix='/todos',
     tags=['todos']
 )
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 db_dependencies = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
