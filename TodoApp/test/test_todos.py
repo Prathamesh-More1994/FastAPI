@@ -2,7 +2,7 @@ from fastapi import status
 
 from .utils import *
 from ..main import app
-from ..models import Todos
+from ..models.todo import Todos
 from ..routers.todos import get_db, get_current_user
 
 app.dependency_overrides[get_db] = override_get_db

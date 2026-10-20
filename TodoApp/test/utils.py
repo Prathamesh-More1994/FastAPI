@@ -5,7 +5,8 @@ from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
 from ..database.database import Base
 from ..main import app
-from ..models import Todos,Users
+from ..models.todo import Todos
+from ..models.user import Users
 from ..routers.auth import bcrypt_context
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./testdb.db'

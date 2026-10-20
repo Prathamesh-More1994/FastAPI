@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from fastapi.templating import Jinja2Templates
 from ..database.dependencies import get_db
-from ..models import Users
+from ..models.user import Users
 from ..core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter(

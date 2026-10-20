@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, Path, APIRouter
 from sqlalchemy.orm import Session
 from starlette import status
 from ..database.dependencies import get_db
-from ..models import Todos
+from ..models.todo import Todos
 from .auth import get_current_user
 
 router = APIRouter(

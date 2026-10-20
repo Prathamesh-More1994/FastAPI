@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, Path, APIRouter, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from starlette import status
-from ..models import Todos
+from ..models.todo import Todos
 from ..database.dependencies import get_db
 from .auth import get_current_user
 from starlette.responses import RedirectResponse
