@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, APIRouter
 from sqlalchemy.orm import Session
-from ..schemas.user import UserVerification
+from ..schemas.user import UserResponse, UserVerification
 from starlette import status
 from ..database.dependencies import get_db
 from ..models.todo import Todos
@@ -18,7 +18,7 @@ db_dependencies = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-@router.get('/',status_code=status.HTTP_200_OK)
+@router.get('/', response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_user(user:user_dependency,db: db_dependencies):
     if user is None:
         raise HTTPException(status_code=401,detail="Authentication Failed")

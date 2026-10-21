@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, APIRouter, Request
-from ..schemas.todo import TodoRequest
+from ..schemas.todo import TodoRequest, TodoResponse
 from sqlalchemy.orm import Session
 from starlette import status
 from ..models.todo import Todos
@@ -18,6 +18,7 @@ router = APIRouter(
 
 db_dependencies = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
+
 
 def redirect_to_login():
     redirect_response = RedirectResponse(url='/auth/login-page', status_code=status.HTTP_302_FOUND)
@@ -74,14 +75,15 @@ async def render_edit_todo_page(request: Request, todo_id: int, db: db_dependenc
 
 
 ### EndPoints ###
-@router.get("/")
+@router.get("/", response_model=list[TodoResponse])
 async def read_all(user: user_dependency, db: db_dependencies):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
     return db.query(Todos).filter(Todos.owner_id == user.get('id')).all()
 
 
-@router.get("/todos/{todo_id}", status_code=status.HTTP_200_OK)
+@router.get(
+    "/todos/{todo_id}", response_model=TodoResponse, status_code=status.HTTP_200_OK)
 async def read_todo(user: user_dependency, db: db_dependencies, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
