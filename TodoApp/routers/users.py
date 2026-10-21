@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, APIRouter
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from ..schemas.user import UserVerification
 from starlette import status
 from ..database.dependencies import get_db
 from ..models.todo import Todos
@@ -17,11 +17,6 @@ router = APIRouter(
 db_dependencies = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-class UserVerification(BaseModel):
-    password: str
-    new_password: str = Field(min_length=6)
-
 
 @router.get('/',status_code=status.HTTP_200_OK)
 async def get_user(user:user_dependency,db: db_dependencies):

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from pydantic import BaseModel
+from ..schemas.auth import CreateUserRequest, Token
 from sqlalchemy.orm import Session
 from starlette import status
 from fastapi.templating import Jinja2Templates
@@ -19,21 +19,6 @@ router = APIRouter(
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
-
-class CreateUserRequest(BaseModel):
-    username: str
-    email: str
-    first_name: str
-    last_name: str
-    password: str
-    role: str
-    phone_number: str
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
 
 db_dependencies = Annotated[Session, Depends(get_db)]
 
