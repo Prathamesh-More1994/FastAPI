@@ -16,7 +16,7 @@
             };
 
             try {
-                const response = await fetch('/todos/todos', {
+                const response = await fetch('/todos', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -66,7 +66,7 @@
 
             console.log(`${todoId}`)
 
-            const response = await fetch(`/todos/todos/${todoId}`, {
+            const response = await fetch(`/todos/${todoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -98,7 +98,7 @@
                     throw new Error('Authentication token not found');
                 }
 
-                const response = await fetch(`/todos/todos/${todoId}`, {
+                const response = await fetch(`/todos/${todoId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`

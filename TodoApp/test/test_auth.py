@@ -6,6 +6,7 @@ from jose import jwt
 from datetime import timedelta
 import pytest
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
 
 app.dependency_overrides[get_db] = get_db
 app.dependency_overrides[get_current_user] = get_current_user
@@ -57,3 +58,51 @@ async def test_get_current_user_missing_payload():
 
     assert exeinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
     assert exeinfo.value.detail == 'Could not validate credentials'
+
+def test_login_for_access_token_success(test_users):
+    client = TestClient(app)
+
+    response = client.post(
+        "/auth/token",
+        data={
+            "username": test_users.username,
+            "password": "testpassword"
+        }
+    )
+
+    assert response.status_code == 200
+    response_data = response.json()
+
+    assert "access_token" in response_data
+    assert response_data["token_type"] == "bearer"
+
+def test_login_for_access_token_invalid_credentials(test_users):
+    client = TestClient(app)
+
+    response = client.post(
+        "/auth/token",
+        data={
+            "username": test_users.username,
+            "password": "wrongpassword"
+        }
+    )
+
+    assert response.status_code == 401
+
+def test_register_user_cannot_choose_admin_role():
+    client = TestClient(app)
+
+    response = client.post(
+        "/auth/",
+        json={
+            "username": "newuser",
+            "email": "newuser@example.com",
+            "first_name": "New",
+            "last_name": "User",
+            "password": "testpassword",
+            "phone_number": "9999999999"
+        }
+    )
+
+    assert response.status_code == 201
+    assert response.json()["role"] == "user"

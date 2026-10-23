@@ -43,9 +43,6 @@ def test_todos():
     db.add(todo)
     db.commit()
     yield todo
-    with engine.connect() as conn:
-        conn.execute(text("DELETE FROM todos;"))
-        conn.commit()
 
 @pytest.fixture
 def test_users():
@@ -63,6 +60,10 @@ def test_users():
     db.add(user)
     db.commit()
     yield user
+
+@pytest.fixture(autouse=True)
+def clean_database():
     with engine.connect() as conn:
+        conn.execute(text("DELETE FROM todos;"))
         conn.execute(text("DELETE FROM users;"))
         conn.commit()

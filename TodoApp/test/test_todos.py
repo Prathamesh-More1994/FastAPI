@@ -21,7 +21,7 @@ def test_read_all_authenticated(test_todos):
 
 
 def test_read_one_authenticated(test_todos):
-    response = client.get('/todos/todos/1')
+    response = client.get('/todos/1')
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {'complete': False,
                                'title': 'Learn to Code',
@@ -32,7 +32,7 @@ def test_read_one_authenticated(test_todos):
 
 
 def test_read_one_authenticated_not_found(test_todos):
-    response = client.get('/todos/todos/999')
+    response = client.get('/todos/999')
     assert response.status_code == 404
     assert response.json() == {'detail': 'Not found'}
 
@@ -45,7 +45,7 @@ def test_create_todo(test_todos):
         'complete': False,
         'owner_id': 1,
     }
-    response = client.post('/todos/todos', json=request_data)
+    response = client.post('/todos', json=request_data)
     assert response.status_code == status.HTTP_201_CREATED
 
     db = TestingSessionLocal()
@@ -65,7 +65,7 @@ def test_update_todo(test_todos):
         'complete': False,
     }
 
-    response = client.put('/todos/todos/1', json=request_data)
+    response = client.put('/todos/1', json=request_data)
     assert response.status_code == 204
 
     db = TestingSessionLocal()
@@ -82,11 +82,11 @@ def test_update_todo_not_found(test_todos):
         'complete': False,
     }
 
-    response = client.put('/todos/todos/999', json=request_data)
+    response = client.put('/todos/999', json=request_data)
     assert response.status_code == 404
 
 def test_delete_todo(test_todos):
-    response = client.delete('/todos/todos/1')
+    response = client.delete('/todos/1')
     assert response.status_code == 204
     db = TestingSessionLocal()
     model = (db.query(Todos)
@@ -95,6 +95,6 @@ def test_delete_todo(test_todos):
     assert model is None
 
 def test_delete_todo_not_found():
-    response = client.delete('/todos/todos/999')
+    response = client.delete('/todos/999')
     assert response.status_code == 404
     assert response.json() == {'detail': 'Not found'}

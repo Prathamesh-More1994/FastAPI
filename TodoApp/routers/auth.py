@@ -46,13 +46,11 @@ def authenticate_user(username: str, password: str, db):
         return False
     return user
 
-
 def create_access_token(username: str, user_id: int, role: str, expires_delta: timedelta):
     encode = {'sub': username, 'id': user_id, 'role': role}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
-
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
@@ -66,7 +64,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
 
-
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependencies, create_user_request: CreateUserRequest):
     create_user_model = Users(
@@ -75,7 +72,7 @@ async def create_user(db: db_dependencies, create_user_request: CreateUserReques
         first_name=create_user_request.first_name,
         last_name=create_user_request.last_name,
         hashed_password=bcrypt_context.hash(create_user_request.password),
-        role=create_user_request.role,
+        role="user",
         is_active=True,
         phone_number=create_user_request.phone_number
     )
@@ -83,12 +80,14 @@ async def create_user(db: db_dependencies, create_user_request: CreateUserReques
     db.commit()
     return create_user_model
 
-
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependencies):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
-        return 'Failed to authenticate'
-    token = create_access_token(user.username, user.id, user.role, timedelta(minutes=20))
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+    token = create_access_token(user.username, user.id, user.role, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     return {'access_token': token, 'token_type': 'bearer'}
