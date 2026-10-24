@@ -25,3 +25,32 @@ def test_admin_delete_todo_not_found():
     response = client.delete('/admin/todo/111')
     assert response.status_code == 404
     assert response.json() == {'detail': 'Todo not found'}
+
+def test_admin_read_all_rejects_regular_user(test_todos):
+    app.dependency_overrides[get_current_user] = lambda: {
+        'username': 'user1',
+        'id': 1,
+        'user_role': 'user'
+    }
+
+    response = client.get('/admin/todo')
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == {'detail': 'Authentication Failed'}
+
+    app.dependency_overrides[get_current_user] = override_get_current_user
+
+
+def test_admin_delete_rejects_regular_user(test_todos):
+    app.dependency_overrides[get_current_user] = lambda: {
+        'username': 'user1',
+        'id': 1,
+        'user_role': 'user'
+    }
+
+    response = client.delete('/admin/todo/1')
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == {'detail': 'Authentication Failed'}
+
+    app.dependency_overrides[get_current_user] = override_get_current_user

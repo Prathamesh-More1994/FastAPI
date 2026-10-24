@@ -1,14 +1,15 @@
 from fastapi import FastAPI, Request, status
-from .database.database import Base, engine
 from .routers import auth, todos, admin, users
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from pathlib import Path
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
 
-app.mount("/static", StaticFiles(directory="TodoApp/static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 def test(request: Request):

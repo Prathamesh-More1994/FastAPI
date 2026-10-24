@@ -7,7 +7,7 @@ from ..database.database import Base
 from ..main import app
 from ..models.todo import Todos
 from ..models.user import Users
-from ..routers.auth import bcrypt_context
+from ..core.security import bcrypt_context
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./testdb.db'
 

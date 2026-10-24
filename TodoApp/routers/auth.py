@@ -1,29 +1,38 @@
-from datetime import timedelta, datetime, timezone
+from datetime import timedelta
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt, JWTError
-from passlib.context import CryptContext
-from ..schemas.auth import CreateUserRequest, Token
+from pathlib import Path
+from ..schemas.auth import CreateUserRequest
 from ..schemas.user import UserResponse
 from sqlalchemy.orm import Session
 from starlette import status
 from fastapi.templating import Jinja2Templates
 from ..database.dependencies import get_db
 from ..models.user import Users
-from ..core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from ..core.config import (
+    SECRET_KEY,
+    ALGORITHM,
+    ACCESS_TOKEN_EXPIRE_MINUTES
+)
+from ..core import config
+from ..core.security import (
+    hash_password,
+    verify_password,
+    create_access_token,
+)
 
 router = APIRouter(
     prefix='/auth',
     tags=['auth']
 )
 
-bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 db_dependencies = Annotated[Session, Depends(get_db)]
 
-templates = Jinja2Templates(directory="TodoApp/templates")
+BASE_DIR = Path(__file__).resolve().parent.parent
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
 ## Pages ##
@@ -40,29 +49,58 @@ def render_register_page(request: Request):
 ## Endpoints ##
 def authenticate_user(username: str, password: str, db):
     user = db.query(Users).filter(Users.username == username).first()
+
     if not user:
         return False
-    if not bcrypt_context.verify(password, user.hashed_password):
+
+    if not verify_password(password, user.hashed_password):
         return False
+
     return user
 
-def create_access_token(username: str, user_id: int, role: str, expires_delta: timedelta):
-    encode = {'sub': username, 'id': user_id, 'role': role}
-    expires = datetime.now(timezone.utc) + expires_delta
-    encode.update({'exp': expires})
-    return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+async def get_current_user(request: Request):
+    token = request.cookies.get("access_token")
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get('sub')
-        user_id: int = payload.get('id')
-        user_role: str = payload.get('role')
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        username: str = payload.get("sub")
+        user_id: int = payload.get("id")
+        user_role: str = payload.get("role")
+
         if username is None or user_id is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
-        return {'username': username, 'id': user_id, 'user_role': user_role}
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials"
+            )
+
+        return {
+            "username": username,
+            "id": user_id,
+            "user_role": user_role
+        }
+
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+
+async def get_current_user_or_none(request: Request):
+    try:
+        return await get_current_user(request)
+    except HTTPException:
+        return None
 
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependencies, create_user_request: CreateUserRequest):
@@ -71,7 +109,7 @@ async def create_user(db: db_dependencies, create_user_request: CreateUserReques
         email=create_user_request.email,
         first_name=create_user_request.first_name,
         last_name=create_user_request.last_name,
-        hashed_password=bcrypt_context.hash(create_user_request.password),
+        hashed_password=hash_password(create_user_request.password),
         role="user",
         is_active=True,
         phone_number=create_user_request.phone_number
@@ -80,9 +118,12 @@ async def create_user(db: db_dependencies, create_user_request: CreateUserReques
     db.commit()
     return create_user_model
 
-@router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-                                 db: db_dependencies):
+@router.post("/token")
+async def login_for_access_token(
+    response: Response,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: db_dependencies
+):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
@@ -90,4 +131,21 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
             detail="Could not validate credentials"
         )
     token = create_access_token(user.username, user.id, user.role, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    return {'access_token': token, 'token_type': 'bearer'}
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=config.COOKIE_SECURE,
+        samesite="lax",
+        path="/"
+    )
+
+    return {"message": "Login successful"}
+
+@router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie(
+        key="access_token",
+        path="/"
+    )
+    return {"message": "Logout successful"}

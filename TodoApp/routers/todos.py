@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, APIRouter, Request
+from pathlib import Path
 from ..schemas.todo import TodoRequest, TodoResponse
 from ..services.todo_service import (
     create_todo,
@@ -11,11 +12,12 @@ from ..services.todo_service import (
 from sqlalchemy.orm import Session
 from starlette import status
 from ..database.dependencies import get_db
-from .auth import get_current_user
+from .auth import get_current_user, get_current_user_or_none
 from starlette.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="TodoApp/templates")
+BASE_DIR = Path(__file__).resolve().parent.parent
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 router = APIRouter(
     prefix='/todos',
@@ -35,7 +37,7 @@ def redirect_to_login():
 ###Pages###
 @router.get("/todo-page")
 async def render_todo_page(request: Request, db: db_dependencies):
-    user = await get_current_user(request.cookies.get('access_token'))
+    user = await get_current_user_or_none(request)
 
     if user is None:
         return redirect_to_login()
@@ -51,7 +53,7 @@ async def render_todo_page(request: Request, db: db_dependencies):
 
 @router.get('/add-todo-page')
 async def render_add_todo_page(request: Request):
-    user = await get_current_user(request.cookies.get('access_token'))
+    user = await get_current_user_or_none(request)
 
     if user is None:
         return redirect_to_login()
@@ -69,7 +71,7 @@ async def render_edit_todo_page(
     todo_id: int,
     db: db_dependencies
 ):
-    user = await get_current_user(request.cookies.get('access_token'))
+    user = await get_current_user_or_none(request)
 
     if user is None:
         return redirect_to_login()
