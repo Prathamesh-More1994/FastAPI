@@ -1,8 +1,8 @@
-\# TodoApp — FastAPI Portfolio Project
+# TodoApp — FastAPI Portfolio Project
 
 
 
-A production-oriented Todo application built with \*\*FastAPI\*\*, \*\*SQLAlchemy\*\*, \*\*PostgreSQL\*\*, \*\*Docker\*\*, and \*\*AWS\*\*.
+A production-oriented Todo application built with **FastAPI**, **SQLAlchemy**, **PostgreSQL**, **Docker**, and **AWS**.
 
 
 
@@ -10,55 +10,55 @@ This project started as a simple FastAPI Todo application and was progressively 
 
 
 
-\## Features
+## Features
 
 
 
-\- User registration and authentication
+- User registration and authentication
 
-\- Cookie-based JWT authentication
+- Cookie-based JWT authentication
 
-\- Password hashing with bcrypt
+- Password hashing with bcrypt
 
-\- Role-based access for admin functionality
+- Role-based access for admin functionality
 
-\- Todo CRUD operations
+- Todo CRUD operations
 
-\- Todo ownership enforcement
+- Todo ownership enforcement
 
-\- Pydantic request/response validation
+- Pydantic request/response validation
 
-\- SQLAlchemy ORM
+- SQLAlchemy ORM
 
-\- PostgreSQL database
+- PostgreSQL database
 
-\- Alembic database migrations
+- Alembic database migrations
 
-\- Centralized application configuration
+- Centralized application configuration
 
-\- Repository/service architecture
+- Repository/service architecture
 
-\- Automated tests with pytest
+- Automated tests with pytest
 
-\- 98% test coverage
+- 98% test coverage
 
-\- Dockerized application
+- Dockerized application
 
-\- Nginx reverse proxy
+- Nginx reverse proxy
 
-\- AWS EC2 deployment
+- AWS EC2 deployment
 
-\- AWS RDS PostgreSQL
+- AWS RDS PostgreSQL
 
-\- GitHub Actions CI/CD
+- GitHub Actions CI/CD
 
-\- Production-style environment variable configuration
+- Production-style environment variable configuration
 
-\- Health-check endpoint
+- Health-check endpoint
 
 
 
-\## Architecture
+## Architecture
 
 
 
@@ -70,33 +70,33 @@ The application follows a layered architecture:
 
 Client
 
-&#x20; │
+  │
 
-&#x20; ▼
+  ▼
 
 Router
 
-&#x20; │
+  │
 
-&#x20; ▼
+  ▼
 
 Service
 
-&#x20; │
+  │
 
-&#x20; ▼
+  ▼
 
 Repository
 
-&#x20; │
+  │
 
-&#x20; ▼
+  ▼
 
 SQLAlchemy
 
-&#x20; │
+  │
 
-&#x20; ▼
+  ▼
 
 PostgreSQL
 
@@ -104,59 +104,59 @@ PostgreSQL
 
 
 
-\### Responsibilities
+### Responsibilities
 
 
 
-\*\*Routers\*\*
+**Routers**
 
-\- Handle HTTP requests and responses
+- Handle HTTP requests and responses
 
-\- Validate incoming request data
+- Validate incoming request data
 
-\- Handle authentication and authorization
+- Handle authentication and authorization
 
-\- Return appropriate HTTP errors
-
-
-
-\*\*Services\*\*
-
-\- Contain application/business logic
-
-\- Coordinate operations between routers and repositories
+- Return appropriate HTTP errors
 
 
 
-\*\*Repositories\*\*
+**Services**
 
-\- Handle database persistence and queries
+- Contain application/business logic
 
-\- Keep database operations separate from business logic
-
-
-
-\*\*Models\*\*
-
-\- Define SQLAlchemy database models
+- Coordinate operations between routers and repositories
 
 
 
-\*\*Schemas\*\*
+**Repositories**
 
-\- Define API request and response contracts using Pydantic
+- Handle database persistence and queries
 
-
-
-\*\*Core\*\*
-
-\- Application configuration
-
-\- Security and authentication utilities
+- Keep database operations separate from business logic
 
 
 
-\## Project Structure
+**Models**
+
+- Define SQLAlchemy database models
+
+
+
+**Schemas**
+
+- Define API request and response contracts using Pydantic
+
+
+
+**Core**
+
+- Application configuration
+
+- Security and authentication utilities
+
+
+
+## Project Structure
 
 
 
@@ -194,9 +194,9 @@ TodoApp/
 
 ├── repositories/
 
-│   ├── admin\_repository.py
+│   ├── admin_repository.py
 
-│   └── todo\_repository.py
+│   └── todo_repository.py
 
 │
 
@@ -224,9 +224,9 @@ TodoApp/
 
 ├── services/
 
-│   ├── admin\_service.py
+│   ├── admin_service.py
 
-│   └── todo\_service.py
+│   └── todo_service.py
 
 │
 
@@ -244,25 +244,25 @@ TodoApp/
 
 └── test/
 
-&#x20;   ├── test\_admin.py
+    ├── test_admin.py
 
-&#x20;   ├── test\_auth.py
+    ├── test_auth.py
 
-&#x20;   ├── test\_main.py
+    ├── test_main.py
 
-&#x20;   ├── test\_todos.py
+    ├── test_todos.py
 
-&#x20;   ├── test\_todo\_repository.py
+    ├── test_todo_repository.py
 
-&#x20;   ├── test\_todo\_service.py
+    ├── test_todo_service.py
 
-&#x20;   └── test\_users.py
+    └── test_users.py
 
 ```
 
 
 
-\## Technology Stack
+## Technology Stack
 
 
 
@@ -298,11 +298,11 @@ TodoApp/
 
 
 
-\## Authentication \& Security
+## Authentication & Security
 
 
 
-Authentication uses JWT access tokens stored in an \*\*HttpOnly cookie\*\*.
+Authentication uses JWT access tokens stored in an **HttpOnly cookie**.
 
 
 
@@ -324,25 +324,25 @@ Example environment configuration:
 
 ```env
 
-DATABASE\_URL=
+DATABASE_URL=
 
-SECRET\_KEY=
+SECRET_KEY=
 
 ALGORITHM=HS256
 
-ACCESS\_TOKEN\_EXPIRE\_MINUTES=20
+ACCESS_TOKEN_EXPIRE_MINUTES=20
 
-COOKIE\_SECURE=false
+COOKIE_SECURE=false
 
 ```
 
 
 
-For production HTTPS deployments, `COOKIE\_SECURE` should be enabled.
+For production HTTPS deployments, `COOKIE_SECURE` should be enabled.
 
 
 
-\## Database Migrations
+## Database Migrations
 
 
 
@@ -350,7 +350,7 @@ Alembic is used to manage database schema changes.
 
 
 
-The application does not rely on SQLAlchemy `create\_all()` during startup. Database schema changes are applied through migrations.
+The application does not rely on SQLAlchemy `create_all()` during startup. Database schema changes are applied through migrations.
 
 
 
@@ -366,7 +366,7 @@ alembic -c alembic.ini upgrade head
 
 
 
-\## Testing
+## Testing
 
 
 
@@ -386,7 +386,7 @@ pytest
 
 
 
-The current test suite achieves approximately \*\*98% coverage\*\*.
+The current test suite achieves approximately **98% coverage**.
 
 
 
@@ -402,11 +402,11 @@ pip check
 
 
 
-\## Running Locally
+## Running Locally
 
 
 
-\### 1. Clone the repository
+### 1. Clone the repository
 
 
 
@@ -420,7 +420,7 @@ cd FastAPI
 
 
 
-\### 2. Create a virtual environment
+### 2. Create a virtual environment
 
 
 
@@ -438,13 +438,13 @@ Activate it on Windows:
 
 ```powershell
 
-.venv\\Scripts\\Activate.ps1
+.venv\Scripts\Activate.ps1
 
 ```
 
 
 
-\### 3. Install dependencies
+### 3. Install dependencies
 
 
 
@@ -456,7 +456,7 @@ pip install -r requirements.txt
 
 
 
-\### 4. Configure environment variables
+### 4. Configure environment variables
 
 
 
@@ -466,15 +466,15 @@ Create a `.env` file based on `.env.example`:
 
 ```env
 
-DATABASE\_URL=
+DATABASE_URL=
 
-SECRET\_KEY=
+SECRET_KEY=
 
 ALGORITHM=HS256
 
-ACCESS\_TOKEN\_EXPIRE\_MINUTES=20
+ACCESS_TOKEN_EXPIRE_MINUTES=20
 
-COOKIE\_SECURE=false
+COOKIE_SECURE=false
 
 ```
 
@@ -484,7 +484,7 @@ Do not commit `.env` to Git.
 
 
 
-\### 5. Run database migrations
+### 5. Run database migrations
 
 
 
@@ -496,7 +496,7 @@ alembic -c alembic.ini upgrade head
 
 
 
-\### 6. Start the application
+### 6. Start the application
 
 
 
@@ -544,7 +544,7 @@ http://127.0.0.1:8000/healthy
 
 
 
-\## Docker
+## Docker
 
 
 
@@ -566,15 +566,7 @@ Run the container:
 
 ```bash
 
-docker run -d \\
-
-&#x20; --name todoapp \\
-
-&#x20; --env-file .env \\
-
-&#x20; -p 8000:8000 \\
-
-&#x20; todoapp:latest
+docker run -d --name todoapp --env-file .env -p 8000:8000 todoapp:latest
 
 ```
 
@@ -584,7 +576,7 @@ The container exposes FastAPI on port `8000`.
 
 
 
-\## AWS Deployment
+## AWS Deployment
 
 
 
@@ -594,33 +586,33 @@ The deployed architecture is:
 
 ```text
 
-&#x20;                   Internet
+                    Internet
 
-&#x20;                      │
+                       │
 
-&#x20;                      ▼
+                       ▼
 
-&#x20;               AWS EC2 :80
+                AWS EC2 :80
 
-&#x20;                      │
+                       │
 
-&#x20;                      ▼
+                       ▼
 
-&#x20;                   Nginx
+                    Nginx
 
-&#x20;                      │
+                       │
 
-&#x20;                      ▼
+                       ▼
 
-&#x20;            Docker / FastAPI :8000
+             Docker / FastAPI :8000
 
-&#x20;                      │
+                       │
 
-&#x20;                      ▼
+                       ▼
 
-&#x20;             AWS RDS PostgreSQL
+              AWS RDS PostgreSQL
 
-&#x20;                      :5432
+                       :5432
 
 ```
 
@@ -642,7 +634,7 @@ Database access is restricted so that PostgreSQL is not directly exposed to the 
 
 
 
-\## CI/CD
+## CI/CD
 
 
 
@@ -654,63 +646,63 @@ GitHub Actions runs the CI/CD pipeline whenever changes are pushed to `main`.
 
 Developer
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 Git commit
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 GitHub
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 Run tests
 
-&#x20;   │
+    │
 
-&#x20;   ├── pytest
+    ├── pytest
 
-&#x20;   └── pip check
+    └── pip check
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 SSH to EC2
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 git pull
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 Docker build
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 Alembic migration
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 Restart application container
 
-&#x20;   │
+    │
 
-&#x20;   ▼
+    ▼
 
 Health check
 
@@ -726,11 +718,11 @@ The EC2 server stores its runtime environment configuration separately from the 
 
 
 
-\## Engineering Decisions
+## Engineering Decisions
 
 
 
-\### Layered architecture
+### Layered architecture
 
 
 
@@ -738,7 +730,7 @@ Business logic and database operations are separated from HTTP routing. This mak
 
 
 
-\### Environment-based configuration
+### Environment-based configuration
 
 
 
@@ -746,7 +738,7 @@ Database credentials and application secrets are supplied through environment va
 
 
 
-\### Alembic migrations
+### Alembic migrations
 
 
 
@@ -754,7 +746,7 @@ Database schema changes are version-controlled and reproducible instead of being
 
 
 
-\### Docker
+### Docker
 
 
 
@@ -762,7 +754,7 @@ The application runs in a reproducible Python environment independent of the hos
 
 
 
-\### Automated testing
+### Automated testing
 
 
 
@@ -770,7 +762,7 @@ Tests run before deployment through GitHub Actions, preventing a deployment when
 
 
 
-\### AWS separation
+### AWS separation
 
 
 
@@ -792,7 +784,7 @@ This avoids running the production database directly inside the application cont
 
 
 
-\## What This Project Demonstrates
+## What This Project Demonstrates
 
 
 
@@ -800,47 +792,47 @@ This project demonstrates practical experience with:
 
 
 
-\- FastAPI application development
+- FastAPI application development
 
-\- REST API design
+- REST API design
 
-\- SQLAlchemy and PostgreSQL
+- SQLAlchemy and PostgreSQL
 
-\- Authentication and authorization
+- Authentication and authorization
 
-\- JWT and cookie-based authentication
+- JWT and cookie-based authentication
 
-\- Pydantic validation
+- Pydantic validation
 
-\- Layered application architecture
+- Layered application architecture
 
-\- Repository/service separation
+- Repository/service separation
 
-\- Automated testing
+- Automated testing
 
-\- Test coverage
+- Test coverage
 
-\- Database migrations
+- Database migrations
 
-\- Docker
+- Docker
 
-\- Nginx
+- Nginx
 
-\- AWS EC2
+- AWS EC2
 
-\- AWS RDS
+- AWS RDS
 
-\- GitHub Actions
+- GitHub Actions
 
-\- CI/CD
+- CI/CD
 
-\- Environment and secret management
+- Environment and secret management
 
-\- Production-oriented deployment practices
+- Production-oriented deployment practices
 
 
 
-\## Project Status
+## Project Status
 
 
 
